@@ -75,7 +75,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     @objc func didClickPreferences() {
-        let textField = NSTextField(string: "")
+        let defaults = UserDefaults.standard
+        
+        let textField = NSTextField(string:
+                                        (defaults.string(forKey: "statusEmoji") ?? "")
+                                     + ((defaults.string(forKey: "statusText") != nil)
+                                            ? " " + defaults.string(forKey: "statusText")!
+                                            : ""))
         textField.placeholderString = ":sushi: In a call"
         textField.setFrameSize(NSSize(width: 200, height: textField.frame.height))
         
@@ -86,7 +92,42 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         alert.addButton(withTitle: "Cancel")
         alert.accessoryView = textField
                 
-        alert.runModal()
+        if alert.runModal() == NSApplication.ModalResponse.alertFirstButtonReturn {
+            
+            let stringParts = textField.stringValue.split(separator: " ", maxSplits: 1)
+            
+            func isEmojiString (_ testString: String) -> Bool{
+                return testString.hasPrefix(":") && testString.hasSuffix(":") && testString.count > 2
+            }
+            
+            switch stringParts.count {
+            case 0: // Empty
+                defaults.removeObject(forKey: "statusEmoji")
+                defaults.removeObject(forKey: "statusText")
+                
+            case 1:
+                if isEmojiString(String(stringParts[0])) { // Just emoji
+                    defaults.set(String(stringParts[0]), forKey: "statusEmoji")
+                    defaults.removeObject(forKey: "statusText")
+                } else { // Just (single-word) text
+                    defaults.removeObject(forKey: "statusEmoji")
+                    defaults.set(String(stringParts[0]), forKey: "statusText")
+                }
+                
+            case 2:
+                if isEmojiString(String(stringParts[0])) { // Emoji and text
+                    defaults.set(String(stringParts[0]), forKey: "statusEmoji")
+                    defaults.set(String(stringParts[1]), forKey: "statusText")
+                } else { // Just (multi-word) text
+                    defaults.removeObject(forKey: "statusEmoji")
+                    defaults.set(textField.stringValue, forKey: "statusText")
+                }
+                
+            default:
+                print("More items than expected in string parts")
+            }
+        }
+    
     }
     
     func application(_ application: NSApplication, open urls: [URL]) {
