@@ -78,6 +78,27 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window.title = "Preferences"
     }
     
+    func application(_ application: NSApplication, open urls: [URL]) {
+
+        guard let components = NSURLComponents(url: urls[0], resolvingAgainstBaseURL: true),
+            let path = components.path,
+            let params = components.queryItems else {
+                print("Missing query params")
+                return
+        }
+        
+        if path != "auth" {
+            print(#"Invalid path "\#(path)"; expected "auth""#)
+        }
+
+        if let token = params.first(where: { $0.name == "token" })?.value {
+            print("token = \(token)")
+        } else {
+            print("Token param missing")
+        }
+    }
+
+    
     func applicationWillTerminate(_ aNotification: Notification) {
         // Insert code here to tear down your application
     }
