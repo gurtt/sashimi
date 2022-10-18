@@ -75,7 +75,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     @objc func didClickPreferences() {
-        window.title = "Preferences"
+        let textField = NSTextField(string: "")
+        textField.placeholderString = ":sushi: In a call"
+        textField.setFrameSize(NSSize(width: 200, height: textField.frame.height))
+        
+        let alert = NSAlert()
+        alert.messageText = "Set a Status Message"
+        alert.informativeText = "Add a custom emoji by typing its name between colons."
+        alert.addButton(withTitle: "Save")
+        alert.addButton(withTitle: "Cancel")
+        alert.accessoryView = textField
+                
+        alert.runModal()
     }
     
     func application(_ application: NSApplication, open urls: [URL]) {
