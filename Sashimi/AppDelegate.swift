@@ -66,6 +66,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc func didClickSlack() {
         changeStatusBarButton(number: 2)
+        
+        let client_id = "4228676926246.4237754035636"
+        let scope = "users.profile:write"
+        
+        let url = URL(string: "https://slack.com/oauth/authorize?client_id=\(client_id)&scope=\(scope)")!
+        NSWorkspace.shared.open(url)
     }
     
     @objc func didClickPreferences() {
