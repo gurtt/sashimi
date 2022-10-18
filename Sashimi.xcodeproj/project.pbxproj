@@ -10,7 +10,7 @@
 		BF02B0AE28FD8CA300895B0E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02B0AD28FD8CA300895B0E /* AppDelegate.swift */; };
 		BF02B0B028FD8CA300895B0E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02B0AF28FD8CA300895B0E /* ViewController.swift */; };
 		BF02B0B228FD8CA300895B0E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF02B0B128FD8CA300895B0E /* Assets.xcassets */; };
-		BF02B0BD28FD8DC600895B0E /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02B0BC28FD8DC600895B0E /* main.swift */; };
+		BF02B0E128FE5C2900895B0E /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02B0E028FE5C2900895B0E /* main.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,7 +19,8 @@
 		BF02B0AF28FD8CA300895B0E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		BF02B0B128FD8CA300895B0E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BF02B0B628FD8CA300895B0E /* Sashimi.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Sashimi.entitlements; sourceTree = "<group>"; };
-		BF02B0BC28FD8DC600895B0E /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		BF02B0C028FE332200895B0E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		BF02B0E028FE5C2900895B0E /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,7 +37,6 @@
 		BF02B0A128FD8CA300895B0E = {
 			isa = PBXGroup;
 			children = (
-				BF02B0BC28FD8DC600895B0E /* main.swift */,
 				BF02B0AC28FD8CA300895B0E /* Sashimi */,
 				BF02B0AB28FD8CA300895B0E /* Products */,
 			);
@@ -53,10 +53,12 @@
 		BF02B0AC28FD8CA300895B0E /* Sashimi */ = {
 			isa = PBXGroup;
 			children = (
+				BF02B0C028FE332200895B0E /* Info.plist */,
 				BF02B0AD28FD8CA300895B0E /* AppDelegate.swift */,
 				BF02B0AF28FD8CA300895B0E /* ViewController.swift */,
 				BF02B0B128FD8CA300895B0E /* Assets.xcassets */,
 				BF02B0B628FD8CA300895B0E /* Sashimi.entitlements */,
+				BF02B0E028FE5C2900895B0E /* main.swift */,
 			);
 			path = Sashimi;
 			sourceTree = "<group>";
@@ -132,7 +134,7 @@
 			files = (
 				BF02B0B028FD8CA300895B0E /* ViewController.swift in Sources */,
 				BF02B0AE28FD8CA300895B0E /* AppDelegate.swift in Sources */,
-				BF02B0BD28FD8DC600895B0E /* main.swift in Sources */,
+				BF02B0E128FE5C2900895B0E /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -266,6 +268,7 @@
 				DEVELOPMENT_TEAM = 242S826K5Z;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Sashimi/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -293,6 +296,7 @@
 				DEVELOPMENT_TEAM = 242S826K5Z;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Sashimi/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
 				LD_RUNPATH_SEARCH_PATHS = (
