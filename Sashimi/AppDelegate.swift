@@ -37,17 +37,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let menu = NSMenu()
         menu.autoenablesItems = false;
 
-        let teams = NSMenuItem(title: "Teams isn't connected", action: #selector(didClickTeams) , keyEquivalent: "")
+        let teams = NSMenuItem(title: "Teams isn't in a call", action: #selector(didClickTeams) , keyEquivalent: "")
         teams.isEnabled = false;
         menu.addItem(teams)
         
-        let slack = NSMenuItem(title: "Slack isn't connected", action: #selector(didClickSlack) , keyEquivalent: "")
-        slack.isEnabled = false;
+        menu.addItem(NSMenuItem.separator())
+        
+        let slack = NSMenuItem(title: "Sign in to Slack", action: #selector(didClickSlack) , keyEquivalent: "")
         menu.addItem(slack)
 
+        menu.addItem(NSMenuItem(title: "Set custom message…", action: #selector(didClickPreferences), keyEquivalent: ""))
+        
         menu.addItem(NSMenuItem.separator())
-
-        menu.addItem(NSMenuItem(title: "Preferences…", action: #selector(didClickPreferences), keyEquivalent: ","))
         
         menu.addItem(NSMenuItem(title: "Quit Sashimi", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
 
