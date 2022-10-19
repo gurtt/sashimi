@@ -52,19 +52,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return
       }
       
-      let events = String(data[Range(match!.range, in: data)!]).dropFirst(24).split(separator: ",")
+      let lastEvent = String(String(data[Range(match!.range, in: data)!]).dropFirst(24).split(separator: ",").last ?? "")
       
-      if events.last == "InCall" {
+      switch lastEvent {
+      case "InCall":
         let defaults = UserDefaults.standard
         
         self.log.notice("Setting custom status")
         self.slack.setStatus(SlackClient.SlackStatus(status_emoji: defaults.string(forKey: "statusEmoji") ?? "",
                                                      status_text: defaults.string(forKey: "statusText") ?? ""))
-      }
-      
-      if events.last == "CallEnded" {
+      case "CallEnded":
         self.log.notice("Clearing status")
         self.slack.clearStatus()
+        
+      default:
+        self.log.notice("Ignoring irrelevant event \"\(lastEvent, privacy: .public)\"")
       }
 
     }
