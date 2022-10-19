@@ -5,8 +5,8 @@
 //  Created by Riley Sommerville on 17/10/2022.
 //
 
-import Foundation
 import AppKit
+import Foundation
 
 let app = NSApplication.shared
 let delegate = AppDelegate()
