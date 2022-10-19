@@ -23,6 +23,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   private var statusItem: NSStatusItem!
   private var signInMenuItem: NSMenuItem!
   private var callStatusMenuItem: NSMenuItem!
+  
+  private var lastCallState: String!
 
   func applicationDidFinishLaunching(_ aNotification: Notification) {
 
@@ -54,6 +56,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       }
       
       let lastEvent = String(String(data[Range(match!.range, in: data)!]).dropFirst(24).split(separator: ",").last ?? "")
+      
+      if self.lastCallState == lastEvent {
+        self.log.info("Ignoring unchanged event \"\(lastEvent, privacy: .public)\"")
+        return
+      }
+      
+      self.lastCallState = lastEvent
       
       switch lastEvent {
       case "InCall":
