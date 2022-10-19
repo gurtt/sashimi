@@ -146,19 +146,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     statusItem.menu = menu
   }
 
-  private func changeStatusBarButton(number: Int) {
-    if let button = statusItem.button {
-      button.image = NSImage(
-        systemSymbolName: "\(number).circle", accessibilityDescription: number.description)
-    }
-  }
-
   @objc func didClickTeams() {
-    changeStatusBarButton(number: 1)
   }
 
   @objc func didClickSlack() {
-    changeStatusBarButton(number: 2)
 
     if slack.hasToken() {  //Sign out
       log.info("Token found; signing out")
