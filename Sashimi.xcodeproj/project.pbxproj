@@ -11,6 +11,7 @@
 		BF02B0B028FD8CA300895B0E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02B0AF28FD8CA300895B0E /* ViewController.swift */; };
 		BF02B0B228FD8CA300895B0E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF02B0B128FD8CA300895B0E /* Assets.xcassets */; };
 		BF02B0E128FE5C2900895B0E /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02B0E028FE5C2900895B0E /* main.swift */; };
+		BF02B0E328FF7ADB00895B0E /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02B0E228FF7ADB00895B0E /* KeychainHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +22,7 @@
 		BF02B0B628FD8CA300895B0E /* Sashimi.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Sashimi.entitlements; sourceTree = "<group>"; };
 		BF02B0C028FE332200895B0E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		BF02B0E028FE5C2900895B0E /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		BF02B0E228FF7ADB00895B0E /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +57,7 @@
 			children = (
 				BF02B0C028FE332200895B0E /* Info.plist */,
 				BF02B0AD28FD8CA300895B0E /* AppDelegate.swift */,
+				BF02B0E228FF7ADB00895B0E /* KeychainHelper.swift */,
 				BF02B0AF28FD8CA300895B0E /* ViewController.swift */,
 				BF02B0B128FD8CA300895B0E /* Assets.xcassets */,
 				BF02B0B628FD8CA300895B0E /* Sashimi.entitlements */,
@@ -135,6 +138,7 @@
 				BF02B0B028FD8CA300895B0E /* ViewController.swift in Sources */,
 				BF02B0AE28FD8CA300895B0E /* AppDelegate.swift in Sources */,
 				BF02B0E128FE5C2900895B0E /* main.swift in Sources */,
+				BF02B0E328FF7ADB00895B0E /* KeychainHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
