@@ -89,4 +89,11 @@ open class SlackClient {
     }
     task.resume()
   }
+  
+  /**
+     Clears the user status.
+     */
+  open func clearStatus() {
+    setStatus(SlackStatus(status_emoji: "", status_text: ""))
+  }
 }
