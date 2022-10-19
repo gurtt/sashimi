@@ -9,6 +9,13 @@ import Foundation
 import AppKit
 
 open class SlackClient {
+    
+    public struct SlackStatus: Codable {
+        var status_emoji: String
+        var status_expiration: Int?
+        var status_text: String
+    }
+    
     private let clientId: String
     var token: String!
     
@@ -43,7 +50,35 @@ open class SlackClient {
      - parameter emoji: The emoji string to set the status to. A nil value uses the Slack default status emoji.
      - parameter text: The text to set the status to.
      */
-    open func setStatus(emoji: String?, text: String?) {
-        // TODO: Send Slack API call
+    open func setStatus(_ status: SlackStatus) {
+        guard let url = URL(string: "https://slack.com/api/users.profile.set") else{
+            return
+            }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-type")
+        request.setValue("Bearer " + token, forHTTPHeaderField: "Authorization")
+        
+        do {
+            let jsonData = try JSONEncoder().encode(status)
+            request.httpBody = jsonData
+        }catch let jsonErr {
+                print(jsonErr)
+        }
+        
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                
+                if let error = error {
+                    print("Error \(error)")
+                    return
+                }
+         
+                if let data = data, let dataString = String(data: data, encoding: .utf8) {
+                    print("Response data string:\n \(dataString)")
+
+                    }
+                }
+        task.resume()
     }
 }
