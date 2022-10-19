@@ -8,6 +8,9 @@
 import Cocoa
 
 class AppDelegate: NSObject, NSApplicationDelegate {
+    private let kTokenKey = "slack-access-token"
+    private let client_id = "4228676926246.4237754035636"
+    private let scope = "users.profile:write"
 
     private var window: NSWindow!
     private var statusItem: NSStatusItem!
@@ -69,11 +72,26 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @objc func didClickSlack() {
         changeStatusBarButton(number: 2)
         
-        let client_id = "4228676926246.4237754035636"
-        let scope = "users.profile:write"
+        let hasToken: Bool
+        do {
+            hasToken = try KeychainHelper().get(kTokenKey) == nil
+        } catch let error as NSError {
+            print("Error: \(error.domain)")
+            hasToken = false
+        }
         
-        let url = URL(string: "https://slack.com/oauth/authorize?client_id=\(client_id)&scope=\(scope)")!
-        NSWorkspace.shared.open(url)
+        if hasToken { //Sign out
+            do {
+                try KeychainHelper().delete(kTokenKey)
+            } catch {
+                print("Couldn't delete key")
+                return
+            }
+            signInMenuItem.title = "Sign in to Slack"
+        } else { // Sign in
+            let url = URL(string: "https://slack.com/oauth/authorize?client_id=\(client_id)&scope=\(scope)")!
+            NSWorkspace.shared.open(url)
+        }
     }
     
     @objc func didClickPreferences() {
