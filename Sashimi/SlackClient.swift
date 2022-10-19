@@ -87,8 +87,9 @@ open class SlackClient {
       }
 
       if let data = data, let dataString = String(data: data, encoding: .utf8) {
-        print("Response data string:\n \(dataString)")
-
+        if dataString.contains("\"ok\":false") {
+          print("Response data string:\n \(dataString)")
+        }
       }
     }
     task.resume()
