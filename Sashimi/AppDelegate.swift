@@ -11,7 +11,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private let kTokenKey = "slack-access-token"
     private let client_id = "4228676926246.4237754035636"
     private let scope = "users.profile:write"
-
+    
+    private var slack: SlackClient!
     private var window: NSWindow!
     private var statusItem: NSStatusItem!
     private var signInMenuItem: NSMenuItem!
@@ -19,6 +20,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         
         NSApp.setActivationPolicy(.accessory)
+        
+        do {
+            try slack = SlackClient(client_id, withAccessToken: KeychainHelper().get(kTokenKey))
+        } catch let error {
+            print(error)
+            slack = SlackClient(client_id)
+        }
         
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem.button {
@@ -39,15 +47,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         menu.addItem(NSMenuItem.separator())
         
-        let hasToken: Bool
-        do {
-            hasToken = try KeychainHelper().get(kTokenKey) == nil
-        } catch let error as NSError {
-            print("Error: \(error.domain)")
-            hasToken = false
-        }
-        
-        signInMenuItem = NSMenuItem(title: "Sign \(hasToken ? "in to" : "out of") Slack", action: #selector(didClickSlack) , keyEquivalent: "")
+        signInMenuItem = NSMenuItem(title: "Sign \(slack.hasToken() ? "out of" : "in to") Slack", action: #selector(didClickSlack) , keyEquivalent: "")
         menu.addItem(signInMenuItem)
 
         menu.addItem(NSMenuItem(title: "Set custom message…", action: #selector(didClickPreferences), keyEquivalent: ""))
@@ -72,26 +72,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @objc func didClickSlack() {
         changeStatusBarButton(number: 2)
         
-        let hasToken: Bool
-        do {
-            hasToken = try KeychainHelper().get(kTokenKey) == nil
-        } catch let error as NSError {
-            print("Error: \(error.domain)")
-            hasToken = false
-        }
-        
-        if hasToken { //Sign out
-            do {
-                try KeychainHelper().delete(kTokenKey)
-            } catch {
-                print("Couldn't delete key")
-                return
+            if slack.hasToken() { //Sign out
+                do {
+                    try KeychainHelper().delete(kTokenKey)
+                    slack.setToken(nil)
+                    signInMenuItem.title = "Sign in to Slack"
+                } catch let error as NSError {
+                    print("Error: \(error)")
+                }
+                
+            } else { // Sign in
+                slack.authorise(withScope: scope)
             }
-            signInMenuItem.title = "Sign in to Slack"
-        } else { // Sign in
-            let url = URL(string: "https://slack.com/oauth/authorize?client_id=\(client_id)&scope=\(scope)")!
-            NSWorkspace.shared.open(url)
-        }
+            
     }
     
     @objc func didClickPreferences() {
@@ -170,8 +163,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 try KeychainHelper().set(token, forKey: kTokenKey)
             } catch let error as NSError {
                 print("Couldn't add token to keychain \(error.domain)")
-                return
+                // TODO: Alert user
             }
+            slack.setToken(token)
             signInMenuItem.title = "Sign out of Slack"
         } else {
             print("Token param missing")
