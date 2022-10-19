@@ -35,6 +35,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         setupMenus()
         
+        if !slack.hasToken() {
+            let alert = NSAlert()
+            alert.messageText = "Sign In to Slack"
+            alert.informativeText = "Sign in to Slack to use Sashimi."
+            alert.addButton(withTitle: "Sign in")
+            alert.addButton(withTitle: "Later")
+                    
+            if alert.runModal() == NSApplication.ModalResponse.alertFirstButtonReturn {
+                didClickSlack()
+            }
+        }
+        
     }
 
     func setupMenus() {
@@ -77,6 +89,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     try KeychainHelper().delete(kTokenKey)
                     slack.setToken(nil)
                     signInMenuItem.title = "Sign in to Slack"
+                    
+                    let alert = NSAlert()
+                    alert.messageText = "Signed Out of Slack"
+                    alert.informativeText = "Sign in again to use Sashimi."
+                    alert.runModal()
+                    
                 } catch let error as NSError {
                     print("Error: \(error)")
                 }
@@ -163,10 +181,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 try KeychainHelper().set(token, forKey: kTokenKey)
             } catch let error as NSError {
                 print("Couldn't add token to keychain \(error.domain)")
-                // TODO: Alert user
+                
+                let alert = NSAlert()
+                alert.messageText = "Couldn't Save Credentials"
+                alert.informativeText = "Sashimi is signed in, but won't stay signed in once you quit the app."
+                alert.runModal()
             }
             slack.setToken(token)
             signInMenuItem.title = "Sign out of Slack"
+            didClickPreferences()
         } else {
             print("Token param missing")
         }
