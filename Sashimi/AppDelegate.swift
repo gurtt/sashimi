@@ -59,10 +59,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         menu.addItem(NSMenuItem.separator())
         
-        signInMenuItem = NSMenuItem(title: "Sign \(slack.hasToken() ? "out of" : "in to") Slack", action: #selector(didClickSlack) , keyEquivalent: "")
+        signInMenuItem = NSMenuItem(title: "Sign \(slack.hasToken() ? "Out of" : "In to") Slack", action: #selector(didClickSlack) , keyEquivalent: "")
         menu.addItem(signInMenuItem)
 
-        menu.addItem(NSMenuItem(title: "Set custom message…", action: #selector(didClickPreferences), keyEquivalent: ""))
+        menu.addItem(NSMenuItem(title: "Set Custom Message…", action: #selector(didClickPreferences), keyEquivalent: ""))
         
         menu.addItem(NSMenuItem.separator())
         
