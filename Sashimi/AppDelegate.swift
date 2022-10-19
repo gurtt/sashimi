@@ -163,35 +163,51 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func application(_ application: NSApplication, open urls: [URL]) {
 
-        guard let components = NSURLComponents(url: urls[0], resolvingAgainstBaseURL: true),
-            let path = components.path,
-            let params = components.queryItems else {
-                print("Missing query params")
-                return
+        enum tokenResolutionError: Error {
+            case missingQueryParameters
+            case invalidPath(path: String)
+            case missingTokenParameter
+            case unhandledError(status: OSStatus)
         }
         
-        if path != "auth" {
-            print(#"Invalid path "\#(path)"; expected "auth""#)
-        }
-
-        if let token = params.first(where: { $0.name == "token" })?.value {
-            print("token = \(token)")
-            do {
-                
-                try KeychainHelper().set(token, forKey: kTokenKey)
-            } catch let error as NSError {
-                print("Couldn't add token to keychain \(error.domain)")
-                
-                let alert = NSAlert()
-                alert.messageText = "Couldn't Save Credentials"
-                alert.informativeText = "Sashimi is signed in, but won't stay signed in once you quit the app."
-                alert.runModal()
+        do {
+            guard let components = NSURLComponents(url: urls[0], resolvingAgainstBaseURL: true),
+                let path = components.path,
+                let params = components.queryItems else {
+                throw tokenResolutionError.missingQueryParameters
             }
-            slack.setToken(token)
-            signInMenuItem.title = "Sign out of Slack"
-            didClickPreferences()
-        } else {
-            print("Token param missing")
+            
+            guard path != "auth" else {
+                throw tokenResolutionError.invalidPath(path: path)
+            }
+
+            if let token = params.first(where: { $0.name == "token" })?.value {
+                print("token = \(token)")
+                do {
+                    
+                    try KeychainHelper().set(token, forKey: kTokenKey)
+                } catch let error as NSError {
+                    print("Couldn't add token to keychain \(error.domain)")
+                    
+                    let alert = NSAlert()
+                    alert.messageText = "Couldn't Save Credentials"
+                    alert.informativeText = "Sashimi is signed in, but won't stay signed in once you quit the app."
+                    alert.runModal()
+                }
+                slack.setToken(token)
+                signInMenuItem.title = "Sign out of Slack"
+                didClickPreferences()
+            } else {
+                throw tokenResolutionError.missingTokenParameter
+            }
+            
+        } catch let error {
+            print(error)
+            
+            let alert = NSAlert()
+            alert.messageText = "Couldn't Sign In"
+            alert.informativeText = "The link is invaid."
+            alert.runModal()
         }
     }
 
