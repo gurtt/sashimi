@@ -22,6 +22,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   private var window: NSWindow!
   private var statusItem: NSStatusItem!
   private var signInMenuItem: NSMenuItem!
+  private var callStatusMenuItem: NSMenuItem!
 
   func applicationDidFinishLaunching(_ aNotification: Notification) {
 
@@ -56,9 +57,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       
       switch lastEvent {
       case "InCall":
+        self.log.notice("Detected call start")
         let defaults = UserDefaults.standard
         
-        self.log.notice("Setting custom status")
+        self.callStatusMenuItem.title = "Teams is in a call"
         
         self.slack.setStatus(
           (defaults.string(forKey: "statusEmoji") == nil && defaults.string(forKey: "statusText") == nil)
@@ -72,7 +74,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
           )
         )
       case "CallEnded":
-        self.log.notice("Clearing status")
+        self.log.notice("Detected call end")
+        self.callStatusMenuItem.title = "Teams isn't in a call"
         self.slack.clearStatus()
         
       default:
@@ -109,10 +112,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let menu = NSMenu()
     menu.autoenablesItems = false
 
-    let teams = NSMenuItem(
+    callStatusMenuItem = NSMenuItem(
       title: "Teams isn't in a call", action: #selector(didClickTeams), keyEquivalent: "")
-    teams.isEnabled = false
-    menu.addItem(teams)
+    callStatusMenuItem.isEnabled = false
+    menu.addItem(callStatusMenuItem)
 
     menu.addItem(NSMenuItem.separator())
 
