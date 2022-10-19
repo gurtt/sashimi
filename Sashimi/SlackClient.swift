@@ -15,6 +15,10 @@ open class SlackClient {
     var status_expiration: Int?
     var status_text: String
   }
+  
+  public struct SlackProfile: Codable {
+    var profile: SlackStatus
+  }
 
   private let clientId: String
   private var token: String!
@@ -69,7 +73,7 @@ open class SlackClient {
     request.setValue("Bearer " + token, forHTTPHeaderField: "Authorization")
 
     do {
-      let jsonData = try JSONEncoder().encode(status)
+      let jsonData = try JSONEncoder().encode(SlackProfile(profile: status))
       request.httpBody = jsonData
     } catch let jsonErr {
       print(jsonErr)
