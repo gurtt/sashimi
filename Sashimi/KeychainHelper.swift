@@ -24,7 +24,7 @@ open class KeychainHelper {
     open func set(_ value: String, forKey key: String) throws {
         let valueData = value.data(using: String.Encoding.utf8)!
         
-        var query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
+        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                     kSecAttrService as String: key,
                                     kSecValueData as String: valueData]
       
@@ -64,7 +64,7 @@ open class KeychainHelper {
     - throws: KeychainError if the item isn't retrieved successfully.
     */
     open func delete(_ key: String) throws {
-        var query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
+        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                     kSecAttrService as String: key]
         
         
