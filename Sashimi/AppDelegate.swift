@@ -59,8 +59,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let defaults = UserDefaults.standard
         
         self.log.notice("Setting custom status")
-        self.slack.setStatus(SlackClient.SlackStatus(status_emoji: defaults.string(forKey: "statusEmoji") ?? "",
-                                                     status_text: defaults.string(forKey: "statusText") ?? ""))
+        
+        self.slack.setStatus(
+          (defaults.string(forKey: "statusEmoji") == nil && defaults.string(forKey: "statusText") == nil)
+          ? SlackClient.SlackStatus(
+              status_emoji: ":sushi:",
+              status_text: "In a call"
+          )
+          : SlackClient.SlackStatus(
+              status_emoji: defaults.string(forKey: "statusEmoji") ?? "",
+              status_text: defaults.string(forKey: "statusText") ?? ""
+          )
+        )
       case "CallEnded":
         self.log.notice("Clearing status")
         self.slack.clearStatus()
