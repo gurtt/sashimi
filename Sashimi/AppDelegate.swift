@@ -271,7 +271,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         throw tokenResolutionError.missingQueryParameters
       }
 
-      guard path != "auth" else {
+      guard path == "auth" else {
         throw tokenResolutionError.invalidPath(path: path)
       }
 
