@@ -147,6 +147,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         if let token = params.first(where: { $0.name == "token" })?.value {
             print("token = \(token)")
+            do {
+                
+                try KeychainHelper().set(token, forKey: kTokenKey)
+            } catch let error as NSError {
+                print("Couldn't add token to keychain \(error.domain)")
+                return
+            }
+            signInMenuItem.title = "Sign out of Slack"
         } else {
             print("Token param missing")
         }
