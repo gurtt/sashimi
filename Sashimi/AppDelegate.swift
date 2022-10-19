@@ -6,11 +6,14 @@
 //
 
 import Cocoa
+import OSLog
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     private let kTokenKey = "slack-access-token"
     private let client_id = "4228676926246.4237754035636"
     private let scope = "users.profile:write"
+    
+    private let log = Logger()
     
     private var slack: SlackClient!
     private var window: NSWindow!
@@ -24,7 +27,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         do {
             try slack = SlackClient(client_id, withAccessToken: KeychainHelper().get(kTokenKey))
         } catch let error {
-            print(error)
+            log.error("Error getting key \"\(self.kTokenKey, privacy: .public)\": \(error.localizedDescription, privacy: .public)")
             slack = SlackClient(client_id)
         }
         
@@ -36,6 +39,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         setupMenus()
         
         if !slack.hasToken() {
+            log.info("No token; triggering sign in prompt")
             let alert = NSAlert()
             alert.messageText = "Sign In to Slack"
             alert.informativeText = "Sign in to Slack to use Sashimi."
@@ -85,7 +89,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         changeStatusBarButton(number: 2)
         
             if slack.hasToken() { //Sign out
+                log.info("Token found; signing out")
                 do {
+                    log.notice("Removing keychain key \"\(self.kTokenKey, privacy: .public)\"")
                     try KeychainHelper().delete(kTokenKey)
                     slack.setToken(nil)
                     signInMenuItem.title = "Sign in to Slack"
@@ -95,11 +101,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     alert.informativeText = "Sign in again to use Sashimi."
                     alert.runModal()
                     
-                } catch let error as NSError {
-                    print("Error: \(error)")
+                } catch let error {
+                    log.error("Error removing key \"\(self.kTokenKey, privacy: .public)\": \(error.localizedDescription, privacy: .public)")
                 }
                 
             } else { // Sign in
+                log.info("Token not found; signing in")
                 slack.authorise(withScope: scope)
             }
             
@@ -108,11 +115,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @objc func didClickPreferences() {
         let defaults = UserDefaults.standard
         
-        let textField = NSTextField(string:
-                                        (defaults.string(forKey: "statusEmoji") ?? "")
-                                     + ((defaults.string(forKey: "statusText") != nil)
-                                            ? " " + defaults.string(forKey: "statusText")!
-                                            : ""))
+        let defaultString = (defaults.string(forKey: "statusEmoji") ?? "")
+        + ((defaults.string(forKey: "statusText") != nil)
+               ? " " + defaults.string(forKey: "statusText")!
+               : "")
+        log.info("Presenting pre-filled status message \"\(defaultString, privacy: .private(mask: .hash))\"")
+        let textField = NSTextField(string: defaultString)
         textField.placeholderString = ":sushi: In a call"
         textField.setFrameSize(NSSize(width: 200, height: textField.frame.height))
         
@@ -133,29 +141,38 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             
             switch stringParts.count {
             case 0: // Empty
+                log.debug("Detected no emoji, no message in \"\(textField.stringValue, privacy: .private(mask: .hash))\"")
                 defaults.removeObject(forKey: "statusEmoji")
                 defaults.removeObject(forKey: "statusText")
                 
             case 1:
                 if isEmojiString(String(stringParts[0])) { // Just emoji
+                    log.debug("Detected emoji, no message in \"\(textField.stringValue, privacy: .private(mask: .hash))\"")
                     defaults.set(String(stringParts[0]), forKey: "statusEmoji")
                     defaults.removeObject(forKey: "statusText")
                 } else { // Just (single-word) text
+                    log.debug("Detected no emoji, message in \"\(textField.stringValue, privacy: .private(mask: .hash))\"")
                     defaults.removeObject(forKey: "statusEmoji")
                     defaults.set(String(stringParts[0]), forKey: "statusText")
                 }
                 
             case 2:
                 if isEmojiString(String(stringParts[0])) { // Emoji and text
+                    log.debug("Detected emoji, message in \"\(textField.stringValue, privacy: .private(mask: .hash))\"")
                     defaults.set(String(stringParts[0]), forKey: "statusEmoji")
                     defaults.set(String(stringParts[1]), forKey: "statusText")
                 } else { // Just (multi-word) text
+                    log.debug("Detected no emoji, message in \"\(textField.stringValue, privacy: .private(mask: .hash))\"")
                     defaults.removeObject(forKey: "statusEmoji")
                     defaults.set(textField.stringValue, forKey: "statusText")
                 }
                 
             default:
-                print("More items than expected in string parts")
+                log.fault("Got \(stringParts.count) parts from \"\(textField.stringValue, privacy: .private(mask: .hash))\", expecting at most 2")
+                
+                let alert = NSAlert()
+                alert.messageText = "Couldn't Set Status Message"
+                alert.runModal()
             }
         }
     
@@ -182,9 +199,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
 
             if let token = params.first(where: { $0.name == "token" })?.value {
-                print("token = \(token)")
+                log.info("Resolved token \"\(token, privacy: .private(mask: .hash))\" from URL")
                 do {
-                    
+                    log.notice("Setting keychain key \"\(self.kTokenKey, privacy: .public)\" to \"\(token, privacy: .private)\"")
                     try KeychainHelper().set(token, forKey: kTokenKey)
                 } catch let error as NSError {
                     print("Couldn't add token to keychain \(error.domain)")
@@ -202,7 +219,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
             
         } catch let error {
-            print(error)
+            log.error("Couldn't resolve token from URL \"\(urls[0], privacy: .private)\": \(error.localizedDescription, privacy: .public)")
             
             let alert = NSAlert()
             alert.messageText = "Couldn't Sign In"
