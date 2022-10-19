@@ -17,10 +17,10 @@ open class SlackClient {
     }
     
     private let clientId: String
-    var token: String!
+    private var token: String!
     
     
-    init(_ clientIdParam: String, withAccessToken tokenParam: String?) {
+    init(_ clientIdParam: String, withAccessToken tokenParam: String? = nil) {
         clientId = clientIdParam
         token = tokenParam
     }
@@ -32,6 +32,15 @@ open class SlackClient {
      */
     open func setToken(_ tokenParam: String?) {
         token = tokenParam
+    }
+    
+    /**
+     Checks if the client has an access token.
+     
+     - returns Wether or not the client has an access token.
+     */
+    open func hasToken() -> Bool {
+        return token != nil
     }
     
     /**
