@@ -11,6 +11,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private var window: NSWindow!
     private var statusItem: NSStatusItem!
+    private var signInMenuItem: NSMenuItem!
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         
@@ -35,8 +36,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         menu.addItem(NSMenuItem.separator())
         
-        let slack = NSMenuItem(title: "Sign in to Slack", action: #selector(didClickSlack) , keyEquivalent: "")
-        menu.addItem(slack)
+        let hasToken: Bool
+        do {
+            hasToken = try KeychainHelper().get(kTokenKey) == nil
+        } catch let error as NSError {
+            print("Error: \(error.domain)")
+            hasToken = false
+        }
+        
+        signInMenuItem = NSMenuItem(title: "Sign \(hasToken ? "in to" : "out of") Slack", action: #selector(didClickSlack) , keyEquivalent: "")
+        menu.addItem(signInMenuItem)
 
         menu.addItem(NSMenuItem(title: "Set custom message…", action: #selector(didClickPreferences), keyEquivalent: ""))
         
