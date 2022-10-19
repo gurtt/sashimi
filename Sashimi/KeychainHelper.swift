@@ -69,6 +69,7 @@ open class KeychainHelper {
         
         
         let status = SecItemDelete(query as CFDictionary)
+        guard status != errSecItemNotFound else { print(#"Tried to delete key "\#(key)" that didn't exist:"#); return }
         guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status) }
     }
 
