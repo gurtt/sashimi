@@ -6,15 +6,18 @@
 //
 
 import Cocoa
+import FileWatcher
 import OSLog
 
 class AppDelegate: NSObject, NSApplicationDelegate {
   private let kTokenKey = "slack-access-token"
   private let client_id = "4228676926246.4237754035636"
   private let scope = "users.profile:write"
+  private let teamsMonitoringPath = "~/Library/Application Support/Microsoft/Teams/storage.json"
 
   private let log = Logger()
-
+  
+  private var fileWatcher: FileWatcher!
   private var slack: SlackClient!
   private var window: NSWindow!
   private var statusItem: NSStatusItem!
@@ -32,6 +35,41 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       )
       slack = SlackClient(client_id)
     }
+      
+    fileWatcher = FileWatcher([NSString(string: teamsMonitoringPath).expandingTildeInPath])
+
+    fileWatcher.callback = { event in
+      if event.path != NSString(string: self.teamsMonitoringPath).expandingTildeInPath { return }
+      
+      self.log.info("Processing FileWatcher event \(event.id, privacy: .public)")
+      
+      let data = String(data: FileManager.default.contents(atPath: event.path)!, encoding: .utf8) ?? ""
+      
+      let match = try? NSRegularExpression(pattern: "(\\{\"appStates\":\\{\"states\":\")[^\"]+").firstMatch(in: data, range: NSMakeRange(0, data.count))
+      
+      guard match != nil else {
+        self.log.notice("Didn't find a match in monitoring file")
+        return
+      }
+      
+      let events = String(data[Range(match!.range, in: data)!]).dropFirst(24).split(separator: ",")
+      
+      if events.last == "InCall" {
+        let defaults = UserDefaults.standard
+        
+        self.log.notice("Setting custom status")
+        self.slack.setStatus(SlackClient.SlackStatus(status_emoji: defaults.string(forKey: "statusEmoji") ?? "",
+                                                     status_text: defaults.string(forKey: "statusText") ?? ""))
+      }
+      
+      if events.last == "CallEnded" {
+        self.log.notice("Clearing status")
+        self.slack.clearStatus()
+      }
+
+    }
+    fileWatcher.start()
+    log.info("Started watching \"\(self.teamsMonitoringPath, privacy: .public)\"")
 
     statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     if let button = statusItem.button {
@@ -261,7 +299,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   }
 
   func applicationWillTerminate(_ aNotification: Notification) {
-    // Insert code here to tear down your application
+    fileWatcher.stop()
   }
 
   func applicationSupportsSecureRestorableState(_ app: NSApplication) -> Bool {
