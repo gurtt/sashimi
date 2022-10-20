@@ -14,6 +14,7 @@
 		BF02B0E328FF7ADB00895B0E /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02B0E228FF7ADB00895B0E /* KeychainHelper.swift */; };
 		BF02B0E528FF8B1E00895B0E /* SlackClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02B0E428FF8B1E00895B0E /* SlackClient.swift */; };
 		BF79A5E428FFF30C0007FCE2 /* FileWatcher in Frameworks */ = {isa = PBXBuildFile; productRef = BF79A5E328FFF30C0007FCE2 /* FileWatcher */; };
+		BF8BEE9A29015C960086BCD9 /* AppUpdater in Frameworks */ = {isa = PBXBuildFile; productRef = BF8BEE9929015C960086BCD9 /* AppUpdater */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +34,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF8BEE9A29015C960086BCD9 /* AppUpdater in Frameworks */,
 				BF79A5E428FFF30C0007FCE2 /* FileWatcher in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -89,6 +91,7 @@
 			name = Sashimi;
 			packageProductDependencies = (
 				BF79A5E328FFF30C0007FCE2 /* FileWatcher */,
+				BF8BEE9929015C960086BCD9 /* AppUpdater */,
 			);
 			productName = Sashimi;
 			productReference = BF02B0AA28FD8CA300895B0E /* Sashimi.app */;
@@ -120,6 +123,7 @@
 			mainGroup = BF02B0A128FD8CA300895B0E;
 			packageReferences = (
 				BF79A5E228FFF30C0007FCE2 /* XCRemoteSwiftPackageReference "FileWatcher" */,
+				BF8BEE9829015C960086BCD9 /* XCRemoteSwiftPackageReference "AppUpdater" */,
 			);
 			productRefGroup = BF02B0AB28FD8CA300895B0E /* Products */;
 			projectDirPath = "";
@@ -364,6 +368,14 @@
 				minimumVersion = 0.2.3;
 			};
 		};
+		BF8BEE9829015C960086BCD9 /* XCRemoteSwiftPackageReference "AppUpdater" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mxcl/AppUpdater.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -371,6 +383,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = BF79A5E228FFF30C0007FCE2 /* XCRemoteSwiftPackageReference "FileWatcher" */;
 			productName = FileWatcher;
+		};
+		BF8BEE9929015C960086BCD9 /* AppUpdater */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BF8BEE9829015C960086BCD9 /* XCRemoteSwiftPackageReference "AppUpdater" */;
+			productName = AppUpdater;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

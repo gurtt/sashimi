@@ -8,8 +8,11 @@
 import Cocoa
 import FileWatcher
 import OSLog
+import AppUpdater
 
 class AppDelegate: NSObject, NSApplicationDelegate {
+  let updater = AppUpdater(owner: "gurtt", repo: "sashimi")
+  
   private let kTokenKey = "slack-access-token"
   private let client_id = "4228676926246.4237754035636"
   private let scope = "users.profile:write"
